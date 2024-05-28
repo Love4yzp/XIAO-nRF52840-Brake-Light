@@ -4,6 +4,8 @@ This project is an experimental, tested demo utilizing the XIAO nRF52840 Sense b
 
 With the LED matrix, you can create customized lighting effects to match your unique style. If you're a cyberpunk enthusiast, the RGB matrix provides endless possibilities for dynamic lighting.
 
+> In essence, this project functions by parsing data from the IMU to control the LED matrix, enabling precise motion tracking and responsive lighting effects.
+
 ### Project Implementation
 
 There are two primary approaches to building this project:
@@ -11,13 +13,6 @@ There are two primary approaches to building this project:
 2. **Machine Learning Processing**: Leveraging machine learning techniques for advanced data analysis, potentially using platforms like Edge Impulse to develop and deploy models.
 
 For this demo, I have implemented the project using the traditional method.
-
-In essence, this project functions by parsing data from the IMU to control the LED matrix, enabling precise motion tracking and responsive lighting effects.
-
-
-Of course, here's the implemented section:
-
----
 
 ## Issues
 
@@ -35,7 +30,6 @@ Hoping someone with more experience in IMUs can help make this project more stab
 
 [video 1 - YouTube Shors](https://www.youtube.com/shorts/8ZCEmZu_6Wk)
 [Video 2 - X](https://x.com/seeedstudio/status/1793634720548606059)
-
 
 #### Minimum Hardware used
 - [Seeed XIAO nRF52840 Sense](https://www.seeedstudio.com/Seeed-XIAO-BLE-Sense-nRF52840-p-5253.html)
