@@ -53,14 +53,12 @@ void setup() {
     delay(500);
 }
 
-#define PITCH_THREAD   30.0f  // 合法范围
-#define STANDING_PITCH 5.0f   // 站立时的 pitch
-// #define LEFT_ANGLE_THRESHOLD  6.5f                    // 左转角度阈值
-// #define RIGHT_ANGLE_THRESHOLD (-LEFT_ANGLE_THRESHOLD)  // 右转角度阈值
+#define PITCH_THREAD   30.0f  // Valid range: [-30, 30]
+#define STANDING_PITCH 5.0f   // the pitch When standing
 
-#define BRAKE_THRESHOLD -5.0f  // 刹车加速度阈值
+#define BRAKE_THRESHOLD -5.0f  // Brake acceleration threshold
 
-// As the IMU is changed, Z 轴取代了原先 Y 轴的方向
+// As the IMU is changed, The Z-axis replaces the original Y-axis direction
 
 float accOffsetX, accOffsetY, accOffsetZ, gyroOffsetX, gyroOffsetY, gyroOffsetZ = 0;
 float accX, accY, accZ, gyroX, gyroY, gyroZ;
@@ -71,9 +69,9 @@ double roll = 0.00, pitch = 0.00, heading = 0.00;  // Roll & Pitch are the angle
 void inline task_bicycle() {
     static float prevAccZ = 0;
 
-    accX  = myIMU.readFloatAccelX() - accOffsetX;  // 左为负
-    accY  = myIMU.readFloatAccelY() - accOffsetY;  // 上位负
-    accZ  = myIMU.readFloatAccelZ() - accOffsetZ;  // 前为负
+    accX  = myIMU.readFloatAccelX() - accOffsetX;  // Left is negative
+    accY  = myIMU.readFloatAccelY() - accOffsetY;  // Up is negative
+    accZ  = myIMU.readFloatAccelZ() - accOffsetZ;  // forward is negative
     gyroX = myIMU.readFloatGyroX() - gyroOffsetX;
     gyroY = myIMU.readFloatGyroY() - gyroOffsetY;
     gyroZ = myIMU.readFloatGyroZ() - gyroOffsetZ;
@@ -83,11 +81,11 @@ void inline task_bicycle() {
     float accelChangeRate = (accZ - prevAccZ) / (THREAD_BICYCLE_DELAY_MS / 1000.0f);
     prevAccZ              = accZ;
     float Pitch           = filter.getPitch();
-    if (fabs(Pitch) < PITCH_THREAD) {  // 合法范围
+    if (fabs(Pitch) < PITCH_THREAD) {  // Valid range: [-30, 30]
 
         do {
             if (accelChangeRate < BRAKE_THRESHOLD) {
-                Serial.println("检测到刹车，accelChangeRate: " + String(accelChangeRate) + " < BRAKE_THRESHOLD: " + String(BRAKE_THRESHOLD));
+                Serial.println("Brake detected, accelChangeRate: " + String(accelChangeRate) + " < BRAKE_THRESHOLD: " + String(BRAKE_THRESHOLD));
                 led_dir      = LED_DIRECTIONS::FULL;
                 led_holdTime = 3000;
                 led_trigger  = true;
@@ -97,7 +95,7 @@ void inline task_bicycle() {
                 break;
             }
             if (fabs(Pitch) < STANDING_PITCH) {
-                Serial.println("直行或者刹车");
+                Serial.println("Driving straight or braking");
                 led_dir = LED_DIRECTIONS::SOFT_FULL;
                 break;
             }
@@ -113,16 +111,16 @@ void inline task_bicycle() {
 
 void inline task_led(void) {
     if (led_trigger && led_holdTime > 0) {
-        led_holdTime -= DELAYVAL;       // 确保每次调用减去正确的时间
-        led.animate_shift(led_dir, 2);  // 保持显示刹车灯
+        led_holdTime -= DELAYVAL;       // Ensure that the correct time is subtracted from each call
+        led.animate_shift(led_dir, 2);  // Keep displaying brake lights
     } else {
-        led_trigger = false;            // 重置触发器
-        led.animate_shift(led_dir, 2);  // 更新为当前状态的灯光
+        led_trigger = false;            // Reset trigger
+        led.animate_shift(led_dir, 2);  // Update the lights to their current state
     }
 }
 
 void inline task_print(void) {
-    roll    = filter.getRoll();   // X 车头车尾
+    roll    = filter.getRoll();   // X Front and rear of the car
     pitch   = filter.getPitch();  // Y
     heading = filter.getYaw();    // Z
                                   // Serial.println("Pitch(左右倾斜):" + String(pitch) + ",Roll(车头扬起):" + String(roll) + ",Yaw(中心围绕):" + String(heading));
